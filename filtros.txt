@@ -1,0 +1,77 @@
+Filtros globais para carros:
+  montadora
+  modelo
+  ano
+  cilindros
+  país
+
+Ideias para Análise Descritiva Geral (Visão Geral da Frota)
+
+Perfil Geral dos Veículos:
+
+Apresentação de médias, medianas, valores máximos e mínimos para as principais métricas:
+Consumo de combustível (MPG)
+Potência (Horsepower)
+Peso (Weight)
+Capacidade do motor (Displacement)
+Objetivo: Entender as características predominantes da amostra. Por exemplo, qual é o consumo médio e a faixa de potência dos carros?
+Distribuição por Origem e Ano:
+
+Contagem de veículos por Origin (país/região de fabricação).
+Distribuição da quantidade de veículos por Model Year.
+Objetivo: Identificar a representatividade de cada país/região e a faixa de anos dos modelos na amostra.
+2. Relação: Eficiência de Combustível (MPG) vs. Características do Veículo
+
+MPG vs. Peso (Weight):
+
+Análise da correlação entre o peso do veículo e seu consumo.
+Hipótese Comum: Carros mais pesados tendem a ter um MPG menor (consomem mais combustível).
+MPG vs. Motor (Cylinders, Displacement, Horsepower):
+
+Cruzamento do MPG com o número de cilindros, a cilindrada e a potência.
+Hipótese Comum: Motores maiores e mais potentes geralmente resultam em menor MPG.
+MPG por Origem (Origin):
+
+Comparação do consumo médio de combustível entre carros de diferentes origens (ex: EUA, Europa, Japão).
+Objetivo: Descobrir se alguma região produz, em média, veículos mais eficientes.
+Evolução do MPG ao Longo do Tempo (Model Year):
+
+Análise da tendência do MPG médio ao longo dos anos.
+Objetivo: Verificar se houve uma melhoria tecnológica na eficiência de combustível com o passar dos anos.
+3. Relação: Desempenho (Potência e Aceleração) vs. Características do Veículo
+
+Fontes de Potência (Horsepower):
+
+Análise de como Displacement e Cylinders se relacionam com o Horsepower.
+Hipótese Comum: Motores com maior cilindrada e mais cilindros produzem mais potência.
+A Relação Peso-Potência e seu Impacto na Aceleração:
+
+Análise da Acceleration em função da relação entre Weight e Horsepower.
+Objetivo: Entender como a combinação de peso e potência afeta o tempo que um carro leva para acelerar. Carros com a melhor relação peso-potência são os mais rápidos?
+Desempenho por Origem (Origin):
+
+Comparativo da potência (Horsepower) e aceleração (Acceleration) médias dos veículos por região de fabricação.
+Objetivo: Identificar se existe uma "especialidade" de desempenho por região (ex: carros americanos focados em potência, europeus em equilíbrio, etc.).
+4. Análise Comparativa por Origem e Evolução
+
+Perfil do "Carro Típico" por Região:
+
+Descrição das características médias (peso, potência, cilindros, MPG) para cada Origin.
+Exemplo de Insight: "Os carros de origem 'EUA' são, em média, 8% mais pesados e 15% mais potentes que os de origem 'Japão', mas com uma eficiência de combustível 20% menor."
+Evolução do Design dos Motores e Veículos:
+
+Análise da tendência do Weight, Displacement e Horsepower médios por Model Year.
+Objetivo: Entender como as características dos carros mudaram ao longo do tempo. Eles se tornaram mais leves? Os motores diminuíram de tamanho?
+5. Segmentação e Identificação de Perfis (Análise Avançada)
+
+Criação de Grupos de Veículos:
+
+Identificação de agrupamentos (clusters) de carros com características semelhantes, como:
+Econômicos: Alto MPG, baixo Horsepower e Weight.
+Potentes (Muscle Cars): Alto Horsepower, Displacement e Weight, com baixo MPG.
+Equilibrados: Valores medianos em todas as métricas.
+Objetivo: Classificar a frota em segmentos de mercado claros.
+Identificação de Veículos Notáveis (Outliers):
+
+Busca por carros que fogem ao padrão, como um veículo muito pesado mas com aceleração surpreendente, ou um carro muito potente com um consumo de combustível inesperadamente bom.
+Objetivo: Encontrar exceções que podem indicar inovações tecnológicas ou nichos de mercado específicos.
