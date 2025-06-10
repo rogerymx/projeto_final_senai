@@ -1,0 +1,95 @@
+Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criação de uma **persona** — um personagem fictício que representa o dono da empresa e será nosso "cliente" para o dashboard.
+
+---
+
+### 👤 **Persona: Roberto Andrade**
+
+* **Cargo**: CEO da LogCar Air & Mobility
+* **Idade**: 48 anos
+* **Setor**: Transporte multimodal (aéreo + terrestre)
+* **Objetivo**: Integrar e otimizar informações sobre desempenho logístico aéreo e terrestre para apoiar decisões estratégicas de investimentos e eficiência operacional.
+* **Interesses**:
+
+  * Eficiência no uso de combustível (aéreo e terrestre)
+  * Relação entre distâncias percorridas, carga transportada e consumo
+  * Modelos de carros mais eficientes para renovação da frota terrestre
+  * Visualização de hotspots de tráfego aéreo por continente e região
+  * Performance de companhias aéreas em termos de passageiros e carga
+  * Identificar gargalos logísticos em voos e frotas
+
+---
+
+### ✅ O que **Roberto** gostaria de ver em um **dashboard**:
+
+#### 1. **Resumo Executivo (Visão Geral)**
+
+* Total de voos realizados OK
+* Total de passageiros transportados OK
+* Total de carga (paga + gratuita + correio) OK
+* Total de combustível consumido (aéreo)
+* Média de consumo de combustível dos carros por origem (baseado no `gpm`) OK
+* Modelos de carros com melhor desempenho (menor `gpm`, maior `cavalos/peso`)
+
+
+
+#### 2. **Eficiência Operacional**
+
+* **Gráfico de barras**: Consumo médio de combustível por companhia aérea
+* **Gráfico de dispersão**: Relação entre distância voada e combustível consumido
+* **Mapa interativo**: Fluxo de voos por região (origem vs destino)
+
+
+
+#### 3. **Análise de Frota Terrestre**
+
+* **Tabela dinâmica**: Ranking de carros por eficiência (gpm) OK
+* **Gráfico de radar** para comparar modelos por: cilindrada, cavalos, peso, aceleração
+* Filtro por origem (EUA, Europa, Japão) OK
+
+
+
+#### 4. **Integração Carro + Voo**
+
+* **Dashboard comparativo**:
+
+  * Km percorridos em terra (simulação baseada em aceleração/peso e consumo) vs. Km voados
+  * Carga média por voo vs. payload de carros (estimativa logística)
+
+
+
+#### 5. **Indicadores de Desempenho (KPIs)**
+
+* Combustível por passageiro (aéreo)
+* Carga por litro de combustível (aéreo e estimado em carros)
+* Taxa de ocupação dos voos (RPK / ASK)
+* Eficiência média por modelo de carro (gpm normalizado)
+
+
+
+#### 6. **Filtros importantes** (em toda a dashboard)
+
+* Ano / Mês
+* Nacionalidade da empresa aérea
+* Região ou país de origem/destino dos voos
+* Origem do modelo de carro
+* Faixa de consumo, peso ou aceleração dos carros
+
+---
+
+Se quiser, posso te ajudar agora com:
+
+* A criação do banco de dados SQLite e inserção dos dados
+* A estrutura básica do app em Streamlit
+* A lógica para gerar gráficos e KPIs com `pandas` e `plotly` ou `matplotlib`
+
+Só me diga se quer começar por alguma dessas partes!
+
+#0ce3e8
+
+#f9ce07
+
+#fcab10
+
+#fc1068
+
+#1f0441

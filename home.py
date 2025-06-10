@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
 import streamlit as st
+
 banner_html = """
 <div style="
     position: relative;
@@ -91,7 +92,7 @@ bannerFooter_html = """
 def welcome (conn,cursor):
     st.markdown(banner_html, unsafe_allow_html=True)
     st.markdown("""
-        <hr style="height:4px; border:none; background-color:#cf0000; margin-top:10px; margin-bottom:10px;" />
+        <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:10px;" />
     """, unsafe_allow_html=True)
 
     # Título centralizado com sombra escura (borda)
@@ -108,19 +109,9 @@ def welcome (conn,cursor):
 
     # Linha inferior decorativa
     st.markdown("""
-        <hr style="height:4px; border:none; background-color:#cf0000; margin-top:10px; margin-bottom:30px;" />
+        <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:30px;" />
     """, unsafe_allow_html=True)
 
-    # Subtítulo com sombra
-    st.markdown("""
-        <h2 style="
-            font-size:26px;
-            color:white;
-            text-shadow: 2px 2px 4px black;
-        ">
-            👥 Integrantes do grupo:
-        </h2>
-    """, unsafe_allow_html=True)
 
     # Lista de nomes com fonte branca e borda escura
     st.markdown("""
@@ -137,8 +128,6 @@ def welcome (conn,cursor):
         </ul>
     """, unsafe_allow_html=True)
     st.markdown("""
-    <hr style="height:4px; border:none; background-color:#cf0000; margin-top:10px; margin-bottom:10px;" />
+    <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:10px;" />
     """, unsafe_allow_html=True)
     st.markdown(bannerFooter_html, unsafe_allow_html=True)
-
-    options = ["North", "East", "South", "West"]

@@ -4,8 +4,33 @@ import streamlit as st
 import auto as at
 import home as hm
 import air as ai
+from PIL import Image
+import base64
+from io import BytesIO
+st.set_page_config(layout="wide",)
+
+def img():
+    imagem = Image.open("./logo.png")
+    imagem_redimensionada = imagem.resize((200, 200))
+
+    buffered = BytesIO()
+    imagem_redimensionada.save(buffered, format="PNG")
+    img_base64 = base64.b64encode(buffered.getvalue()).decode()
+
+    st.markdown(
+        f'<div style="display: flex; justify-content: center;">'
+        f'<img src="data:image/png;base64,{img_base64}" width="150" height="150">'
+        f'</div>',
+        unsafe_allow_html=True
+    )
+with st.sidebar:
+    img()
+
 conn = sqlite3.connect('./database/automobile.db')
 cursor = conn.cursor()
+
+# with st.sidebar:
+#     img()
 
 # def create_tables(conn, cursor):
     # Criação de todas as tabelas necessárias
@@ -35,14 +60,21 @@ if cursor.fetchone()[0] == 0:
     df_automoveis_sem_nulos = df_automoveis.dropna()
     df_automoveis_sem_nulos.to_sql('automoveis', conn, if_exists='append', index=False)
 
-opcao = st.sidebar.selectbox("Selecione: ", ['Home','Carro', 'Avião'], key="main_select")
 
-if opcao == 'Carro':
-    st.write(opcao)
-    at.auto(conn,cursor)
-    
-elif opcao == 'Avião':
+if 'global_opcao' not in st.session_state:
+    st.session_state.global_opcao = 'Home'  # Valor padrão
+
+# Atualiza a session state com a seleção do usuário
+st.session_state.global_opcao = st.sidebar.selectbox(
+    "Selecione: ",
+    ['Home', 'Carro', 'Avião'],
+    key="main_select"
+)
+
+# Agora você pode acessar st.session_state.global_opcao em qualquer lugar
+if st.session_state.global_opcao == 'Carro':
+    at.auto(conn, cursor)
+elif st.session_state.global_opcao == 'Avião':
     ai.air()
-
-elif opcao == 'Home':
-    hm.welcome(conn,cursor)
+elif st.session_state.global_opcao == 'Home':
+    hm.welcome(conn, cursor)
