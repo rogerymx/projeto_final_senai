@@ -105,8 +105,6 @@ def air ():
     <h1 style="
         text-align:center;
         font-size:36px;
-        color:white;
-        text-shadow: 2px 2px 4px black;
     ">
             Aviões 
     </h1>
@@ -143,6 +141,18 @@ def air ():
     default=None
     )
 
+    mes_selec = st.sidebar.multiselect(
+    "Mês do Voo",
+    options=sorted(df_avioes['MÊS'].unique()),
+    default=None
+    )
+
+    aeroporto_origem_select = st.sidebar.multiselect(
+    "País de Origem",
+    options=sorted(df_avioes['AEROPORTO_DE_ORIGEM_PAÍS'].unique()),
+    default=None
+    )
+
     # ano_selec = st.sidebar.multiselect(
     # "Ano do Carro",
     # options=sorted(df_avioes['ANO'].unique()),
@@ -155,11 +165,14 @@ def air ():
     if natureza_selec:
         df_avioes = df_avioes[df_avioes['NATUREZA'].isin(natureza_selec)]
 
-    # if ano_selec:
-    #     df_avioes = df_avioes[df_avioes['ano_modelo'].isin(ano_selec)]
+    if mes_selec:
+        df_avioes = df_avioes[df_avioes['MÊS'].isin(mes_selec)]
     
-    tab_geral, tab_paises, tab_motorizacao, tab_database = st.tabs([
-            "Visão geral", "Países", "Motorização","Database"
+    if aeroporto_origem_select:
+        df_avioes = df_avioes[df_avioes['AEROPORTO_DE_ORIGEM_PAÍS'].isin(aeroporto_origem_select)]
+    
+    tab_geral, tab_desempenho, tab_motorizacao, tab_database = st.tabs([
+            "Visão geral", "Desempenho", "Motorização","Database"
         ])
     
     with tab_geral:
@@ -215,13 +228,28 @@ def air ():
             
             total_carga = int(df_avioes['CARGA_PAGA_KG'].sum()) + int(df_avioes['CARGA_GRÁTIS_KG'].sum()) + int(df_avioes['CORREIO_KG'].sum())
             st.metric("Total de Carga", f"{total_carga:,} KG")
+    
+    with tab_desempenho:
+        st.markdown("""
+            <h1 style="
+                text-align:center;
+                font-size:36px;
+            ">
+                Desempenho
+            </h1>
+        """, unsafe_allow_html=True)
+        
+        st.divider()
+        
+        companhias = pd.read_sql_query('SELECT * FROM airplane GROUP BY EMPRESA_NOME', conn)
+
+        st.dataframe(companhias) 
+
     with tab_database:
         st.markdown("""
             <h1 style="
                 text-align:center;
                 font-size:36px;
-                color:white;
-                text-shadow: 2px 2px 4px black;
             ">
                 Database
             </h1>

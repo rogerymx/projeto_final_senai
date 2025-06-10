@@ -12,7 +12,7 @@ banner_html = """
 ">
     <!-- Imagem de fundo -->
     <div style="
-        background-image: url('https://png.pngtree.com/back_origin_pic/00/02/73/012889c34d373a30eb52240c1d2992e6.jpg');
+        background-image: url('https://sdmntprwestus2.oaiusercontent.com/files/00000000-255c-61f8-9e13-9ebcee9f10f5/raw?se=2025-06-10T18%3A58%3A01Z&sp=r&sv=2024-08-04&sr=b&scid=289ef9be-06cb-567d-ae9a-dadc049ed30f&skoid=b64a43d9-3512-45c2-98b4-dea55d094240&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-06-10T16%3A13%3A41Z&ske=2025-06-11T16%3A13%3A41Z&sks=b&skv=2024-08-04&sig=WIslPf9zgbR0X2hAjEzUwLh2yN3uprHBV1IaicY977U%3D');
         background-size: cover;
         background-position: center;
         width: 100%;
@@ -100,8 +100,6 @@ def welcome (conn,cursor):
         <h1 style="
             text-align:center;
             font-size:36px;
-            color:white;
-            text-shadow: 2px 2px 4px black;
         ">
             🚗 Bem-vindo ✈️
         </h1>

@@ -15,7 +15,7 @@ banner_html = """
     ">
         <!-- Imagem de fundo -->
         <div style="
-            background-image: url('https://png.pngtree.com/back_origin_pic/00/02/73/012889c34d373a30eb52240c1d2992e6.jpg');
+            background-image: url('https://sdmntprwestus2.oaiusercontent.com/files/00000000-255c-61f8-9e13-9ebcee9f10f5/raw?se=2025-06-10T18%3A58%3A01Z&sp=r&sv=2024-08-04&sr=b&scid=289ef9be-06cb-567d-ae9a-dadc049ed30f&skoid=b64a43d9-3512-45c2-98b4-dea55d094240&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-06-10T16%3A13%3A41Z&ske=2025-06-11T16%3A13%3A41Z&sks=b&skv=2024-08-04&sig=WIslPf9zgbR0X2hAjEzUwLh2yN3uprHBV1IaicY977U%3D');
             background-size: cover;
             background-position: center;
             width: 100%;
@@ -51,8 +51,6 @@ def auto (conn,cursor):
         <h1 style="
             text-align:center;
             font-size:36px;
-            color:white;
-            text-shadow: 2px 2px 4px black;
         ">
              Carros 
         </h1>
@@ -126,8 +124,6 @@ def auto (conn,cursor):
             <h1 style="
                 text-align:center;
                 font-size:36px;
-                color:white;
-                text-shadow: 2px 2px 4px black;
             ">
                 Resumo Executivo
             </h1>
@@ -181,97 +177,72 @@ def auto (conn,cursor):
         ">
             Motorização
         </h1>
-    """, unsafe_allow_html=True)
-    st.divider()
-    
-    cursor.execute("DROP VIEW IF EXISTS eficiencia;")
-    cursor.execute('''CREATE VIEW IF NOT EXISTS eficiencia AS
-                            SELECT nome, gpm, cilindrada, cavalos, peso, aceleracao
-                            FROM automoveis
-                            ORDER BY gpm DESC;''')
-    df_eficiencia = pd.read_sql_query('SELECT * FROM eficiencia', conn)
+        """, unsafe_allow_html=True)
+        st.divider()
 
-    numeric_cols = df_eficiencia.select_dtypes(include=['number']).columns
-        
-    df_eficienciaR = df_eficiencia.copy()
-    df_eficienciaR[numeric_cols] = df_eficienciaR[numeric_cols].applymap(
-            lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x
-        )
-        
-    html_table = df_eficienciaR.style.set_table_styles([
-            {'selector': 'table', 'props': [('width', '100%'), ('table-layout', 'fixed')]},
-            {'selector': 'th', 'props': [('text-align', 'center')]},
-            {'selector': 'td', 'props': [('text-align', 'center')]},
-            {'selector': 'th:nth-child(1), td:nth-child(1)', 'props': [('width', '10%')]},
-            {'selector': 'th:nth-child(2), td:nth-child(2)', 'props': [('width', '30%')]},
-            {'selector': 'th:nth-child(3), td:nth-child(3)', 'props': [('width', '30%')]},
-            {'selector': 'th:nth-child(4), td:nth-child(4)', 'props': [('width', '30%')]},
-            ]).to_html(index=False)
-            
-    st.markdown(
-        f"""
-        <div style="overflow:auto; border:1px solid #ddd; padding:10px; border-radius:10px; max-height:400px">
-            {html_table}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )    
-    
-    nomes_selecionados = st.multiselect(
-        "Selecione os nomes para comparar no gráfico radar:",
-        df_automoveis['nome'].tolist(),
-        default=df_automoveis['nome'].tolist()[:2]  
+        nomes_selecionados = st.multiselect(
+            "Selecione os nomes para comparar no gráfico radar:",
+            df_automoveis['nome'].tolist(),
+            default=df_automoveis['nome'].tolist()[:2]  
     )
     
-    if nomes_selecionados:
-        categorias = ['cilindrada', 'cavalos', 'peso', 'aceleracao']
-        
-        df_normalizado = df_automoveis.copy()
-        for categoria in categorias:
-            if categoria == 'aceleracao':
-                df_normalizado[categoria] = 1 - (
-                    (df_automoveis[categoria] - df_automoveis[categoria].min()) / 
-                    (df_automoveis[categoria].max() - df_automoveis[categoria].min())
-                )
-            else:
-                df_normalizado[categoria] = (
-                    (df_automoveis[categoria] - df_automoveis[categoria].min()) / 
-                    (df_automoveis[categoria].max() - df_automoveis[categoria].min())
-                )
-        
-        fig = go.Figure()
-        
-        for nome in nomes_selecionados:
-            dados = df_normalizado[df_normalizado['nome'] == nome].iloc[0]
-            valores = [dados[c] for c in categorias]
+        if nomes_selecionados:
+            categorias = ['cilindrada', 'cavalos', 'peso', 'aceleracao']
             
-            fig.add_trace(go.Scatterpolar(
-                r=valores + [valores[0]],  
-                theta=categorias + [categorias[0]],
-                fill='toself',
-                name=nome
-            ))
+            df_normalizado = dashboard.copy()
+            for categoria in categorias:
+                if categoria == 'aceleracao':
+                    df_normalizado[categoria] = 1 - (
+                        (dashboard[categoria] - dashboard[categoria].min()) / 
+                        (dashboard[categoria].max() - dashboard[categoria].min())
+                    )
+                else:
+                    df_normalizado[categoria] = (
+                        (dashboard[categoria] - dashboard[categoria].min()) / 
+                        (dashboard[categoria].max() - dashboard[categoria].min())
+                    )
+            
+            fig = go.Figure()
+            
+            for nome in nomes_selecionados:
+                dados = df_normalizado[df_normalizado['nome'] == nome].iloc[0]
+                valores = [dados[c] for c in categorias]
+                
+                fig.add_trace(go.Scatterpolar(
+                    r=valores + [valores[0]],  
+                    theta=categorias + [categorias[0]],
+                    fill='toself',
+                    name=nome
+                ))
+            
+            fig.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 1]  
+                    )
+                ),
+                showlegend=True,
+                title="Comparação dos modelos por características"
+            )
+            
+            st.plotly_chart(fig)
         
-        fig.update_layout(
-            polar=dict(
-                radialaxis=dict(
-                    visible=True,
-                    range=[0, 1]  
-                )
-            ),
-            showlegend=True,
-            title="Comparação dos modelos por características"
-        )
-        
-        st.plotly_chart(fig)
+        peso_vs_cavalos = px.scatter(dashboard, x='peso', y='cavalos', color='origem', title="Peso vs Cavalos")
+        gpm_vs_cavalos = px.scatter(dashboard, x='gpm', y='cavalos', color='origem', title="GPM vs Cavalos")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.plotly_chart(peso_vs_cavalos, use_container_width=True)
+        with col2:
+            st.plotly_chart(gpm_vs_cavalos, use_container_width=True)    
 
     with tab_database:
         st.markdown("""
             <h1 style="
                 text-align:center;
                 font-size:36px;
-                color:white;
-                text-shadow: 2px 2px 4px black;
             ">
                 Database
             </h1>

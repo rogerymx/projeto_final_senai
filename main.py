@@ -25,17 +25,10 @@ def img():
     )
 with st.sidebar:
     img()
+    st.divider()
 
 conn = sqlite3.connect('./database/automobile.db')
 cursor = conn.cursor()
-
-# with st.sidebar:
-#     img()
-
-# def create_tables(conn, cursor):
-    # Criação de todas as tabelas necessárias
-    
-    # Criação da tabela 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS automoveis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,17 +54,20 @@ if cursor.fetchone()[0] == 0:
     df_automoveis_sem_nulos.to_sql('automoveis', conn, if_exists='append', index=False)
 
 
+col1, col2, col3 = st.sidebar.columns(3)
+with col1:
+    if st.button("Home"):
+        st.session_state.global_opcao = 'Home'
+with col2:
+    if st.button("Carro"):
+        st.session_state.global_opcao = 'Carro'
+with col3:
+    if st.button("Avião"):
+        st.session_state.global_opcao = 'Avião'
+
 if 'global_opcao' not in st.session_state:
-    st.session_state.global_opcao = 'Home'  # Valor padrão
+    st.session_state.global_opcao = 'Home'
 
-# Atualiza a session state com a seleção do usuário
-st.session_state.global_opcao = st.sidebar.selectbox(
-    "Selecione: ",
-    ['Home', 'Carro', 'Avião'],
-    key="main_select"
-)
-
-# Agora você pode acessar st.session_state.global_opcao em qualquer lugar
 if st.session_state.global_opcao == 'Carro':
     at.auto(conn, cursor)
 elif st.session_state.global_opcao == 'Avião':

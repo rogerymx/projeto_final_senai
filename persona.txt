@@ -26,9 +26,9 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 * Total de voos realizados OK
 * Total de passageiros transportados OK
 * Total de carga (paga + gratuita + correio) OK
-* Total de combustível consumido (aéreo)
+* Total de combustível consumido (aéreo) OK
 * Média de consumo de combustível dos carros por origem (baseado no `gpm`) OK
-* Modelos de carros com melhor desempenho (menor `gpm`, maior `cavalos/peso`)
+* Modelos de carros com melhor desempenho (menor `gpm`, maior `cavalos/peso`) OK
 
 
 
@@ -43,7 +43,7 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 #### 3. **Análise de Frota Terrestre**
 
 * **Tabela dinâmica**: Ranking de carros por eficiência (gpm) OK
-* **Gráfico de radar** para comparar modelos por: cilindrada, cavalos, peso, aceleração
+* **Gráfico de radar** para comparar modelos por: cilindrada, cavalos, peso, aceleração OK
 * Filtro por origem (EUA, Europa, Japão) OK
 
 
@@ -62,7 +62,7 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 * Combustível por passageiro (aéreo)
 * Carga por litro de combustível (aéreo e estimado em carros)
 * Taxa de ocupação dos voos (RPK / ASK)
-* Eficiência média por modelo de carro (gpm normalizado)
+* Eficiência média por modelo de carro (gpm normalizado) OK
 
 
 
@@ -71,7 +71,7 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 * Ano / Mês
 * Nacionalidade da empresa aérea
 * Região ou país de origem/destino dos voos
-* Origem do modelo de carro
+* Origem do modelo de carro OK
 * Faixa de consumo, peso ou aceleração dos carros
 
 ---
