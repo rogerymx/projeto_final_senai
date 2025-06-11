@@ -253,8 +253,8 @@ def auto (conn,cursor):
             
             st.plotly_chart(fig)
         
-        peso_vs_cavalos = px.scatter(dashboard, x='peso', y='cavalos', color='origem', title="Peso vs Cavalos")
-        gpm_vs_cavalos = px.scatter(dashboard, x='gpm', y='cavalos', color='origem', title="GPM vs Cavalos")
+        peso_vs_cavalos = px.scatter(dashboard, x='peso', y='cavalos', color='origem', hover_name='nome', title="Peso vs Cavalos")
+        gpm_vs_cavalos = px.scatter(dashboard, x='gpm', y='cavalos', color='origem', hover_name='nome', title="GPM vs Cavalos")
 
         st.divider()
 
