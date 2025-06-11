@@ -34,7 +34,7 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 
 #### 2. **Eficiência Operacional**
 
-* **Gráfico de barras**: Consumo médio de combustível por companhia aérea
+* **Gráfico de barras**: Consumo médio de combustível por companhia aérea OK
 * **Gráfico de dispersão**: Relação entre distância voada e combustível consumido OK
 * **Mapa interativo**: Fluxo de voos por região (origem vs destino)
 

@@ -185,7 +185,16 @@ def air ():
     # default=None
     # )
 
-    
+    def formatar_numero(valor):
+        if valor >= 1_000_000_000:
+            return f'{valor / 1_000_000_000:.1f}bi'
+        elif valor >= 1_000_000:
+            return f'{valor / 1_000_000:.1f}mi'
+        elif valor >= 1_000:
+            return f'{valor / 1_000:.1f}k'
+        else:
+            return f'{int(valor)}'
+
     tab_geral, tab_desempenho, tab_motorizacao, tab_database = st.tabs([
             "Visão geral", "Desempenho", "Motorização","Database"
         ])
