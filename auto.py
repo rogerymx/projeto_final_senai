@@ -4,48 +4,52 @@ import streamlit as st
 import database
 import plotly.express as px
 import plotly.graph_objects as go
+import base64
+with open("carro.png", "rb") as img_file:
+    img_base64 = base64.b64encode(img_file.read()).decode()
 
-banner_html = """
+banner_html = f"""
+<div style="
+    position: relative;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+">
+    <div style="
+        background-image: url('data:image/png;base64,{img_base64}');
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 100%;
+        filter: brightness(0.5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    "></div>
+
     <div style="
         position: relative;
-        height: 200px;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 20px;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     ">
-        <!-- Imagem de fundo -->
-        <div style="
-            background-image: url('https://sdmntprwestus2.oaiusercontent.com/files/00000000-255c-61f8-9e13-9ebcee9f10f5/raw?se=2025-06-10T18%3A58%3A01Z&sp=r&sv=2024-08-04&sr=b&scid=289ef9be-06cb-567d-ae9a-dadc049ed30f&skoid=b64a43d9-3512-45c2-98b4-dea55d094240&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-06-10T16%3A13%3A41Z&ske=2025-06-11T16%3A13%3A41Z&sks=b&skv=2024-08-04&sig=WIslPf9zgbR0X2hAjEzUwLh2yN3uprHBV1IaicY977U%3D');
-            background-size: cover;
-            background-position: center;
-            width: 100%;
-            height: 100%;
-            filter: brightness(0.5);
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        "></div>
-
-        <!-- Texto centralizado -->
-        <div style="
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        <h1 style="
+            color: white;
+            font-size: 36px;
+            font-family: Arial, sans-serif;
+            text-shadow: 2px 2px 4px black;
         ">
-            <h1 style="
-                color: white;
-                font-size: 36px;
-                font-family: Arial, sans-serif;
-                text-shadow: 2px 2px 4px black;
-            ">
-            </h1>
-        </div>
+            Bem-vindo à Plataforma de Desempenho
+        </h1>
     </div>
-    """
+</div>
+"""
+
+st.markdown(banner_html, unsafe_allow_html=True)
 def auto (conn,cursor):
     st.markdown("""
         <h1 style="
@@ -75,23 +79,24 @@ def auto (conn,cursor):
         </h1>
     """, unsafe_allow_html=True)
 
-    montadora_selec = st.sidebar.multiselect(
-    "Montadora",
-    options=sorted(df_automoveis['montadora'].unique()),
-    default=None
-    )
-
-    ano_selec = st.sidebar.multiselect(
-    "Ano do Carro",
-    options=sorted(df_automoveis['ano_modelo'].unique()),
-    default=None
-    )
 
     origem_selec = st.sidebar.multiselect(
     "Pais de Origem",
     options=sorted(df_automoveis['origem'].unique()),
     default=None
     )
+
+    if origem_selec:
+        df_automoveis = df_automoveis[df_automoveis['origem'].isin(origem_selec)]
+
+    montadora_selec = st.sidebar.multiselect(
+    "Montadora",
+    options=sorted(df_automoveis['montadora'].unique()),
+    default=None
+    )
+
+    if montadora_selec:
+        df_automoveis = df_automoveis[df_automoveis['montadora'].isin(montadora_selec)]
 
     modelo_selec = st.sidebar.multiselect(
     "Modelo Carros",
@@ -102,14 +107,16 @@ def auto (conn,cursor):
     if modelo_selec:
         df_automoveis = df_automoveis[df_automoveis['nome'].isin(modelo_selec)]
 
-    if montadora_selec:
-        df_automoveis = df_automoveis[df_automoveis['montadora'].isin(montadora_selec)]
+    ano_selec = st.sidebar.multiselect(
+    "Ano do Carro",
+    options=sorted(df_automoveis['ano_modelo'].unique()),
+    default=None
+    )
 
     if ano_selec:
         df_automoveis = df_automoveis[df_automoveis['ano_modelo'].isin(ano_selec)]
         
-    if origem_selec:
-        df_automoveis = df_automoveis[df_automoveis['origem'].isin(origem_selec)]
+
     
     
         
@@ -231,6 +238,8 @@ def auto (conn,cursor):
         peso_vs_cavalos = px.scatter(dashboard, x='peso', y='cavalos', color='origem', title="Peso vs Cavalos")
         gpm_vs_cavalos = px.scatter(dashboard, x='gpm', y='cavalos', color='origem', title="GPM vs Cavalos")
 
+        st.divider()
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -254,7 +263,7 @@ def auto (conn,cursor):
         
         # Cria uma cópia e formata os valores para 2 casas decimais
         df_automoveisR = df_automoveis.copy()
-        df_automoveisR[numeric_cols] = df_automoveisR[numeric_cols].applymap(
+        df_automoveisR[numeric_cols] = df_automoveisR[numeric_cols].map(
             lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x
         )
         

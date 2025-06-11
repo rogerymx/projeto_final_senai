@@ -1,8 +1,11 @@
 import sqlite3
 import pandas as pd
 import streamlit as st
+import base64
+with open("carro.png", "rb") as img_file:
+    img_base64 = base64.b64encode(img_file.read()).decode()
 
-banner_html = """
+banner_html = f"""
 <div style="
     position: relative;
     height: 200px;
@@ -10,9 +13,8 @@ banner_html = """
     overflow: hidden;
     margin-bottom: 20px;
 ">
-    <!-- Imagem de fundo -->
     <div style="
-        background-image: url('https://sdmntprwestus2.oaiusercontent.com/files/00000000-255c-61f8-9e13-9ebcee9f10f5/raw?se=2025-06-10T18%3A58%3A01Z&sp=r&sv=2024-08-04&sr=b&scid=289ef9be-06cb-567d-ae9a-dadc049ed30f&skoid=b64a43d9-3512-45c2-98b4-dea55d094240&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-06-10T16%3A13%3A41Z&ske=2025-06-11T16%3A13%3A41Z&sks=b&skv=2024-08-04&sig=WIslPf9zgbR0X2hAjEzUwLh2yN3uprHBV1IaicY977U%3D');
+        background-image: url('data:image/png;base64,{img_base64}');
         background-size: cover;
         background-position: center;
         width: 100%;
@@ -24,7 +26,6 @@ banner_html = """
         z-index: 1;
     "></div>
 
-    <!-- Texto centralizado -->
     <div style="
         position: relative;
         z-index: 2;
@@ -39,7 +40,7 @@ banner_html = """
             font-family: Arial, sans-serif;
             text-shadow: 2px 2px 4px black;
         ">
-            Bem-vindo ao Sistema da Academia
+            Bem-vindo à Plataforma de Desempenho
         </h1>
     </div>
 </div>
@@ -101,7 +102,7 @@ def welcome (conn,cursor):
             text-align:center;
             font-size:36px;
         ">
-            🚗 Bem-vindo ✈️
+            Bem-vindo
         </h1>
     """, unsafe_allow_html=True)
 

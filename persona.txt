@@ -35,7 +35,7 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 #### 2. **Eficiência Operacional**
 
 * **Gráfico de barras**: Consumo médio de combustível por companhia aérea
-* **Gráfico de dispersão**: Relação entre distância voada e combustível consumido
+* **Gráfico de dispersão**: Relação entre distância voada e combustível consumido OK
 * **Mapa interativo**: Fluxo de voos por região (origem vs destino)
 
 
@@ -61,14 +61,14 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 
 * Combustível por passageiro (aéreo)
 * Carga por litro de combustível (aéreo e estimado em carros)
-* Taxa de ocupação dos voos (RPK / ASK)
+* Taxa de ocupação dos voos (RPK / ASK) OK
 * Eficiência média por modelo de carro (gpm normalizado) OK
 
 
 
 #### 6. **Filtros importantes** (em toda a dashboard)
 
-* Ano / Mês
+* Ano / Mês 
 * Nacionalidade da empresa aérea
 * Região ou país de origem/destino dos voos
 * Origem do modelo de carro OK
