@@ -142,14 +142,6 @@ def air ():
     df_avioes = pd.read_sql_query('''Select * from airplane''',conn)
     # st.dataframe(df_avioes)
 
-    empresa_selec = st.sidebar.multiselect(
-    "Nome da Empresa",
-    options=sorted(df_avioes['EMPRESA_NOME'].unique()),
-    default=None
-    )
-    if empresa_selec:
-        df_avioes = df_avioes[df_avioes['EMPRESA_NOME'].isin(empresa_selec)]
-
     natureza_selec = st.sidebar.multiselect(
     "Natureza do Voo",
     options=sorted(df_avioes['NATUREZA'].unique()),
@@ -160,6 +152,17 @@ def air ():
         df_avioes = df_avioes[df_avioes['NATUREZA'].isin(natureza_selec)]
 
 
+    empresa_selec = st.sidebar.multiselect(
+    "Nome da Empresa",
+    options=sorted(df_avioes['EMPRESA_NOME'].unique()),
+    default=None
+    )
+
+    if empresa_selec:
+        df_avioes = df_avioes[df_avioes['EMPRESA_NOME'].isin(empresa_selec)]
+
+
+
     mes_selec = st.sidebar.multiselect(
     "Mês do Voo",
     options=sorted(df_avioes['MÊS'].unique()),
@@ -168,6 +171,8 @@ def air ():
 
     if mes_selec:
         df_avioes = df_avioes[df_avioes['MÊS'].isin(mes_selec)]
+
+
 
     aeroporto_origem_select = st.sidebar.multiselect(
     "País de Origem do Voo",
@@ -195,8 +200,8 @@ def air ():
         else:
             return f'{int(valor)}'
 
-    tab_geral, tab_desempenho, tab_motorizacao, tab_database = st.tabs([
-            "Visão geral", "Desempenho", "Motorização","Database"
+    tab_geral, tab_desempenho, tab_combustivel, tab_database = st.tabs([
+            "Visão geral", "Desempenho", "Combustivel","Database"
         ])
     
     with tab_geral:
@@ -233,25 +238,28 @@ def air ():
         """, unsafe_allow_html=True)
         
         # Layout das colunas
+        
+        total_voos = df_avioes['DECOLAGENS'].sum()
+        total_combustivel = df_avioes['COMBUSTÍVEL_LITROS'].sum()
+        total_passageiros = df_avioes['PASSAGEIROS_PAGOS'].sum() + df_avioes['PASSAGEIROS_GRÁTIS'].sum()
+        total_carga_kg = df_avioes['CARGA_PAGA_KG'].sum() + df_avioes['CARGA_GRÁTIS_KG'].sum() + df_avioes['CORREIO_KG'].sum()
+        
+        voos_domesticos = df_avioes[df_avioes['NATUREZA'] == 'DOMÉSTICA']['DECOLAGENS'].sum()
+        voos_internacionais = df_avioes[df_avioes['NATUREZA'] == 'INTERNACIONAL']['DECOLAGENS'].sum()
+        
         col1, col2, col3 = st.columns(3)
-
+        
         with col1:
-            st.metric("Total de Voos", f"{int(df_avioes['DECOLAGENS'].sum()):,}")
-            st.metric("Total de Combustível Consumido", f"{int(df_avioes['COMBUSTÍVEL_LITROS'].sum()):,} L")
+            st.metric("Total de Voos", formatar_numero(total_voos))
+            st.metric("Total de Combustível (L)", formatar_numero(total_combustivel))
 
         with col2:
-            total_domesticos = df_avioes[df_avioes['NATUREZA'] == 'DOMÉSTICA']
-            st.metric("Voos Domésticos", f"{int(total_domesticos['DECOLAGENS'].sum()):,}")
-            
-            total_passageiros = int(df_avioes['PASSAGEIROS_PAGOS'].sum()) + int(df_avioes['PASSAGEIROS_GRÁTIS'].sum())
-            st.metric("Total de Passageiros", f"{total_passageiros:,}")
+            st.metric("Voos Domésticos", formatar_numero(voos_domesticos))
+            st.metric("Total de Passageiros", formatar_numero(total_passageiros))
 
         with col3:
-            total_internacionais = df_avioes[df_avioes['NATUREZA'] == 'INTERNACIONAL']
-            st.metric("Voos Internacionais", f"{int(total_internacionais['DECOLAGENS'].sum()):,}")
-            
-            total_carga = int(df_avioes['CARGA_PAGA_KG'].sum()) + int(df_avioes['CARGA_GRÁTIS_KG'].sum()) + int(df_avioes['CORREIO_KG'].sum())
-            st.metric("Total de Carga", f"{total_carga:,} KG")
+            st.metric("Voos Internacionais", formatar_numero(voos_internacionais))
+            st.metric("Total de Carga (KG)", formatar_numero(total_carga_kg))
         
     with tab_desempenho:    
         st.markdown("""
@@ -334,7 +342,7 @@ def air ():
         df_carga['OCUPACAO'] = (df_carga['RTK'] / df_carga['ATK']) * 100 
         df_carga['OCUPACAO'] = df_carga['OCUPACAO'].round(2)
 
-        df_carga = df_carga.sort_values('OCUPACAO', ascending=False).head(5)
+        df_carga = df_carga.sort_values('OCUPACAO', ascending=False).head(10)
 
         fig1 = px.bar(df_carga, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
             title='Taxa de Ocupação Média por Empresa', 
@@ -352,19 +360,14 @@ def air ():
             )
         )
         st.plotly_chart(fig1)
-        
-        df_carga2 = pd.read_sql_query('''SELECT EMPRESA_NOME, SUM(CARGA_PAGA_KG), SUM(CARGA_GRÁTIS_KG), SUM(CORREIO_KG), SUM(COMBUSTÍVEL_LITROS)  FROM airplane 
-                                        GROUP BY EMPRESA_NOME''', conn)
-        df_carga2 = df_carga2[df_carga2['SUM(COMBUSTÍVEL_LITROS)'] > 0]
-        st.dataframe(df_carga2)
 
-    with tab_motorizacao:
+    with tab_combustivel:
         st.markdown(""" 
             <h1 style="
                 text-align:center;
                 font-size:36px;
             ">
-                Motorização
+                Combustivel
             </h1>
         """, unsafe_allow_html=True)
         
@@ -405,6 +408,17 @@ def air ():
             hover_data=['ANO', 'MÊS']
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
+   
+        df_carga2 = pd.read_sql_query('''SELECT EMPRESA_NOME, SUM(CARGA_PAGA_KG) as CARGA_PAGA_KG, SUM(CARGA_GRÁTIS_KG) as CARGA_GRÁTIS_KG, SUM(CORREIO_KG) as CORREIO_KG, 
+                                        SUM(COMBUSTÍVEL_LITROS) as COMBUSTÍVEL_LITROS  FROM airplane 
+                                        GROUP BY EMPRESA_NOME''', conn)
+        
+        df_carga2['CONSUMO_CARGA'] = df_carga2['COMBUSTÍVEL_LITROS'] / (df_carga2['CARGA_PAGA_KG'] + df_carga2['CARGA_GRÁTIS_KG'] + df_carga2['CORREIO_KG'])
+        df_carga2['CONSUMO_CARGA'] = df_carga2['CONSUMO_CARGA'].replace([float('inf'), -float('inf')], 0)
+        df_carga2 = df_carga2[(df_carga2['COMBUSTÍVEL_LITROS'] > 0) & (df_carga2['CONSUMO_CARGA'] > 0)]
+
+        st.dataframe(df_carga2)
+
 
     with tab_database:
         st.markdown(""" 

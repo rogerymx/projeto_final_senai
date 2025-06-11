@@ -1,13 +1,13 @@
 import sqlite3
 import pandas as pd
 import streamlit as st
+st.set_page_config(layout="wide",)
 import auto as at
 import home as hm
 import air as ai
 from PIL import Image
 import base64
 from io import BytesIO
-st.set_page_config(layout="wide",)
 
 def img():
     imagem = Image.open("./logo.png")
@@ -55,14 +55,16 @@ if cursor.fetchone()[0] == 0:
 
 
 col1, col2, col3 = st.sidebar.columns(3)
+
 with col1:
-    if st.button("Home"):
+    
+    if st.button("🏠 Home"):
         st.session_state.global_opcao = 'Home'
 with col2:
-    if st.button("Carro"):
+    if st.button("🚗 Carro"):
         st.session_state.global_opcao = 'Carro'
 with col3:
-    if st.button("Avião"):
+    if st.button("✈️ Avião"):
         st.session_state.global_opcao = 'Avião'
 
 if 'global_opcao' not in st.session_state:

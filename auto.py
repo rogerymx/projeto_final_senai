@@ -163,7 +163,7 @@ def auto (conn,cursor):
 
         with col1:
             st.metric("Total de Carros", len(df_automoveis))
-            st.metric("Média do Ano", round(df_automoveis['ano_modelo'].mean(), 0))
+            st.metric("Média de cilindradas", round(df_automoveis['cilindrada'].mean()))
         
         with col2:
             st.metric("Consumo Médio (MPG)", round(df_automoveis['gpm'].mean(), 2))
@@ -172,6 +172,24 @@ def auto (conn,cursor):
         with col3:
             st.metric("Potência Média (HP)", round(df_automoveis['cavalos'].mean(), 2))
             st.metric("Carro Mais Potente", (df_automoveis.loc[df_automoveis['cavalos'].idxmax(), 'nome']).upper())
+            
+        carros_por_ano = df_automoveis['ano_modelo'].value_counts().sort_index()
+
+            # 2. Criar o GRÁFICO DE BARRAS
+        fig_ano = px.bar(
+        x=carros_por_ano.index,
+        y=carros_por_ano.values,
+        title='Total de Carros por Ano',
+        labels={'x': 'Ano', 'y': 'Total de Carros'},
+        text_auto=True  # Adiciona o valor no topo de cada barra
+                )
+
+        fig_ano.update_traces(marker_color='#0ce3e8')
+
+            # 4. Exibir o gráfico
+        st.plotly_chart(fig_ano, use_container_width=True)
+            # --- FIM DA SEÇÃO DO GRÁFICO ---
+
 
 
     with tab_motorizacao: 
