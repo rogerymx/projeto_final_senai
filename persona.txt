@@ -59,8 +59,8 @@ Bom dia! Vamos estruturar isso da melhor forma possível. Comecemos com a criaç
 
 #### 5. **Indicadores de Desempenho (KPIs)**
 
-* Combustível por passageiro (aéreo)
-* Carga por litro de combustível (aéreo e estimado em carros)
+* Combustível por passageiro (aéreo) OK
+* Carga por litro de combustível (aéreo e estimado em carros) OK
 * Taxa de ocupação dos voos (RPK / ASK) OK
 * Eficiência média por modelo de carro (gpm normalizado) OK
 

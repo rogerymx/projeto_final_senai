@@ -184,6 +184,16 @@ def air ():
         df_avioes = df_avioes[df_avioes['AEROPORTO_DE_ORIGEM_PAÍS'].isin(aeroporto_origem_select)]
 
 
+    grupo_voo_select = st.sidebar.multiselect(
+    "Grupo de Voo",
+    options=sorted(df_avioes['GRUPO_DE_VOO'].unique()),
+    default=None
+    )
+
+    if grupo_voo_select:
+        df_avioes = df_avioes[df_avioes['GRUPO_DE_VOO'].isin(grupo_voo_select)]
+
+
     # ano_selec = st.sidebar.multiselect(
     # "Ano do Carro",
     # options=sorted(df_avioes['ANO'].unique()),
@@ -200,8 +210,8 @@ def air ():
         else:
             return f'{int(valor)}'
 
-    tab_geral, tab_desempenho, tab_combustivel, tab_database = st.tabs([
-            "Visão geral", "Desempenho", "Combustivel","Database"
+    tab_geral, tab_desempenho, tab_combustivel, tab_regiao, tab_database = st.tabs([
+            "Visão geral", "Desempenho", "Combustivel", "Região","Database"
         ])
     
     with tab_geral:
@@ -287,7 +297,7 @@ def air ():
             df_agrupado = df_agrupado.sort_values('OCUPACAO', ascending=False).head(5)
 
             fig = px.bar(df_agrupado, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
-                title='Taxa de Ocupação Média por Empresa', 
+                title='Taxa de Ocupação Média de Passageiros por Empresa', 
                 barmode='group',
                 color_discrete_sequence=paleta_monocromatica) # <--- AQUI
 
@@ -304,6 +314,76 @@ def air ():
 
             st.plotly_chart(fig)
         with col2:
+
+            df_carga = df_avioes.groupby('EMPRESA_SIGLA').agg({
+                'ATK': 'mean',
+                'RTK': 'mean'
+            }).reset_index()
+
+            df_carga['OCUPACAO'] = (df_carga['RTK'] / df_carga['ATK']) * 100 
+            df_carga['OCUPACAO'] = df_carga['OCUPACAO'].round(2)
+
+            df_carga = df_carga.sort_values('OCUPACAO', ascending=False).head(5)
+
+            fig1 = px.bar(df_carga, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
+                title='Taxa de Ocupação Média de Carga por Empresa', 
+                barmode='group',
+                color_discrete_sequence=paleta_monocromatica) # <--- AQUI
+
+            fig1.update_traces(
+                text=df_carga['OCUPACAO'].apply(lambda x: f'{x:.1f}%'), # Dica: formatar com 1 casa decimal
+                textposition='inside',
+                insidetextanchor='middle',
+                textfont=dict(
+                    size=16,
+                    color='white', # Cor branca para melhor contraste com as barras escuras
+                    family='Arial, sans-serif'
+                )
+            )
+            st.plotly_chart(fig1)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            # Supondo que 'df_filtrado' esteja disponível e filtrado corretamente
+
+            # 1. Agrupa e soma os passageiros por empresa (seu código original)
+            market_share_passageiros = df_avioes.groupby('EMPRESA_NOME')['PASSAGEIROS_PAGOS'].sum().reset_index()
+
+            # 2. Ordena as empresas pelo total de passageiros, da maior para a menor
+            market_share_passageiros = market_share_passageiros.sort_values(by='PASSAGEIROS_PAGOS', ascending=False)
+
+            # 3. Lógica para separar o Top 20 e agrupar o resto em "Outras"
+            # Verifica se há mais de 20 empresas para justificar o agrupamento
+            if len(market_share_passageiros) > 20:
+                # Pega as 20 maiores
+                top_20 = market_share_passageiros.head(20)
+                
+                # Cria um novo DataFrame para a categoria "Outras"
+                # Somando os passageiros de todas as empresas a partir da 21ª posição
+                outras = pd.DataFrame({
+                    'EMPRESA_NOME': ['Outras'],
+                    'PASSAGEIROS_PAGOS': [market_share_passageiros.iloc[20:]['PASSAGEIROS_PAGOS'].sum()]
+                })
+                
+                # Concatena o DataFrame do Top 20 com o de "Outras"
+                df_para_grafico = pd.concat([top_20, outras], ignore_index=True)
+            else:
+                # Se houver 20 ou menos empresas, simplesmente usa o DataFrame completo
+                df_para_grafico = market_share_passageiros
+
+            # 4. Cria o Treemap com o novo DataFrame filtrado e agrupado
+            fig = px.treemap(
+                df_para_grafico, 
+                path=[px.Constant("Todas as Empresas"), 'EMPRESA_NOME'], 
+                values='PASSAGEIROS_PAGOS',
+                title='Market Share das 20 Maiores Empresas (+ Outras)'
+            )
+
+            fig.update_traces(textinfo="label+percent root")
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col2:
             query_decolagens_mes = 'SELECT MÊS, SUM(DECOLAGENS) as DECOLAGENS FROM airplane GROUP BY MÊS'
             media_mes = pd.read_sql_query(query_decolagens_mes, conn)
 
@@ -311,55 +391,31 @@ def air ():
             media_mes = media_mes.set_index('MÊS')
 
             # 3. Cria um índice completo de 1 a 12 e aplica ao DataFrame
-            # Meses existentes mantêm seus dados, meses ausentes são criados com o valor 0.
-            indice_anual_completo = pd.Index(range(1, 5), name='MÊS')
+            indice_anual_completo = pd.Index(range(1, 13), name='MÊS')  # Ajuste para 1-12 (meses do ano)
             media_mes = media_mes.reindex(indice_anual_completo, fill_value=0)
 
-            # 4. Transforma o índice 'MÊS' de volta em uma coluna para usar no Plotly Express
+            # 4. Transforma o índice 'MÊS' de volta em uma coluna
             media_mes = media_mes.reset_index()
 
-            # 5. Cria e exibe o gráfico de barras (seu código aqui já estava correto)
-            fig = px.bar(
-                media_mes, 
-                x='MÊS', 
-                y='DECOLAGENS', 
-                title='Total de Decolagens por Mês',
-                text_auto=True # Dica: Adiciona o valor no topo de cada barra
+            # 5. Cria o gráfico de pizza
+            fig = px.pie(
+                media_mes,
+                names='MÊS',                  # Valores do eixo X (meses)
+                values='DECOLAGENS',           # Valores do eixo Y (decolagens)
+                title='Distribuição de Decolagens por Mês',
+                hole=0.3,                     # Opcional: transforma em "donut chart" (0 = pizza completa)
+                color_discrete_sequence=px.colors.sequential.Teal  # Mantém a cor verde-escura do exemplo
             )
+
+            # Personalizações adicionais
             fig.update_traces(
-                marker_color='#129990',          # Define a nova cor escura para as barras
-                textfont_color='white'           # Garante que o texto dentro da barra seja branco para contraste
+                textposition='inside',        # Texto dentro das fatias
+                textinfo='percent+label',     # Mostra porcentagem + rótulo (mês)
+                marker=dict(line=dict(color='white', width=1))  # Linhas brancas entre fatias
             )
 
+            # Exibe o gráfico
             st.plotly_chart(fig, use_container_width=True)
-
-            
-        df_carga = df_avioes.groupby('EMPRESA_SIGLA').agg({
-            'ATK': 'mean',
-            'RTK': 'mean'
-        }).reset_index()
-
-        df_carga['OCUPACAO'] = (df_carga['RTK'] / df_carga['ATK']) * 100 
-        df_carga['OCUPACAO'] = df_carga['OCUPACAO'].round(2)
-
-        df_carga = df_carga.sort_values('OCUPACAO', ascending=False).head(10)
-
-        fig1 = px.bar(df_carga, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
-            title='Taxa de Ocupação Média por Empresa', 
-            barmode='group',
-            color_discrete_sequence=paleta_monocromatica) # <--- AQUI
-
-        fig1.update_traces(
-            text=df_carga['OCUPACAO'].apply(lambda x: f'{x:.1f}%'), # Dica: formatar com 1 casa decimal
-            textposition='inside',
-            insidetextanchor='middle',
-            textfont=dict(
-                size=16,
-                color='white', # Cor branca para melhor contraste com as barras escuras
-                family='Arial, sans-serif'
-            )
-        )
-        st.plotly_chart(fig1)
 
     with tab_combustivel:
         st.markdown(""" 
@@ -403,22 +459,88 @@ def air ():
                 'COMBUSTÍVEL_LITROS': 'Combustível Consumido (Litros)',
                 'EMPRESA_NOME': 'Empresa'
             },
-            title='Dispersão: Distância Voada x Combustível Consumido',
             height=500,
             hover_data=['ANO', 'MÊS']
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
    
-        df_carga2 = pd.read_sql_query('''SELECT EMPRESA_NOME, SUM(CARGA_PAGA_KG) as CARGA_PAGA_KG, SUM(CARGA_GRÁTIS_KG) as CARGA_GRÁTIS_KG, SUM(CORREIO_KG) as CORREIO_KG, 
-                                        SUM(COMBUSTÍVEL_LITROS) as COMBUSTÍVEL_LITROS  FROM airplane 
-                                        GROUP BY EMPRESA_NOME''', conn)
-        
-        df_carga2['CONSUMO_CARGA'] = df_carga2['COMBUSTÍVEL_LITROS'] / (df_carga2['CARGA_PAGA_KG'] + df_carga2['CARGA_GRÁTIS_KG'] + df_carga2['CORREIO_KG'])
+        df_carga2 = df_avioes.groupby('EMPRESA_NOME').agg({
+            'CARGA_PAGA_KG': 'sum',
+            'CARGA_GRÁTIS_KG': 'sum',
+            'CORREIO_KG': 'sum',
+            'COMBUSTÍVEL_LITROS': 'sum'
+        }).reset_index()
+
+        st.markdown("### 5 Menores Consumos de Combustível por KG de Carga por Empresa")
+
+        df_carga2['CONSUMO_CARGA'] = df_carga2['COMBUSTÍVEL_LITROS'] / (
+            df_carga2['CARGA_PAGA_KG'] + df_carga2['CARGA_GRÁTIS_KG'] + df_carga2['CORREIO_KG']
+        )
+
         df_carga2['CONSUMO_CARGA'] = df_carga2['CONSUMO_CARGA'].replace([float('inf'), -float('inf')], 0)
+        df_carga2 = df_carga2.fillna(0)
+
         df_carga2 = df_carga2[(df_carga2['COMBUSTÍVEL_LITROS'] > 0) & (df_carga2['CONSUMO_CARGA'] > 0)]
 
-        st.dataframe(df_carga2)
+        df_top5 = df_carga2.sort_values('CONSUMO_CARGA').head(5)
 
+        fig_consumo = px.bar(
+            df_top5,
+            x='EMPRESA_NOME',
+            y='CONSUMO_CARGA',
+            labels={'EMPRESA_NOME': 'Empresa', 'CONSUMO_CARGA': 'Consumo (L/kg)'},
+            color='CONSUMO_CARGA',
+            color_continuous_scale='Viridis'
+        )
+
+        fig_consumo.update_layout(
+            xaxis_tickangle=-45,
+            margin=dict(t=50, b=100)
+        )
+
+        st.plotly_chart(fig_consumo, use_container_width=True)
+
+
+    with tab_regiao:
+        st.markdown(""" 
+            <h1 style="
+                text-align:center;
+                font-size:36px;
+            ">
+                Região
+            </h1>
+        """, unsafe_allow_html=True)
+        
+        st.divider()
+        df_origem = pd.read_sql_query('SELECT * FROM airplane WHERE AEROPORTO_DE_ORIGEM_REGIÃO NOT NULL', conn)
+
+        df_destino = pd.read_sql_query('SELECT * FROM airplane WHERE AEROPORTO_DE_DESTINO_REGIÃO NOT NULL', conn)
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            df_voos_por_regiao_origem = df_origem.groupby('AEROPORTO_DE_ORIGEM_REGIÃO').size().reset_index(name='Quantidade_Voos')
+
+            # Criar o gráfico de pizza
+            fig = px.pie(df_voos_por_regiao_origem, 
+                        names='AEROPORTO_DE_ORIGEM_REGIÃO', 
+                        values='Quantidade_Voos',
+                        title='Quantidade de Voos por Região de Origem')
+
+            # Exibir o gráfico no Streamlit
+            st.plotly_chart(fig)
+
+        with col2:
+            df_voos_por_regiao_destino = df_destino.groupby('AEROPORTO_DE_DESTINO_REGIÃO').size().reset_index(name='Quantidade_Voos')
+
+                    # Criar o gráfico de pizza
+            fig = px.pie(df_voos_por_regiao_destino, 
+                        names='AEROPORTO_DE_DESTINO_REGIÃO', 
+                        values='Quantidade_Voos',
+                        title='Quantidade de Voos por Região de Destino')
+
+            # Exibir o gráfico no Streamlit
+            st.plotly_chart(fig)
 
     with tab_database:
         st.markdown(""" 
@@ -431,5 +553,4 @@ def air ():
         """, unsafe_allow_html=True)
         
         st.divider()
-        
         st.dataframe(df_avioes)        
