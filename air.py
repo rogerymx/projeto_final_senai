@@ -271,6 +271,22 @@ def air ():
             st.metric("Voos Internacionais", formatar_numero(voos_internacionais))
             st.metric("Total de Carga (KG)", formatar_numero(total_carga_kg))
         
+        decolPer =((df_avioes.groupby('EMPRESA_SIGLA')['DECOLAGENS'].sum()).sort_values(ascending=False).head(20))
+
+        fig_ano = px.bar(
+        x=decolPer.index,
+        y=decolPer.values,
+        title='Total de Decolagens por Ano',
+        labels={'x': 'Ano', 'y': 'Total de Decolagens'},
+        text_auto=True  # Adiciona o valor no topo de cada barra
+                )
+
+        fig_ano.update_traces(marker_color='#0ce3e8')
+
+            # 4. Exibir o gráfico
+        st.plotly_chart(fig_ano, use_container_width=True)
+
+
     with tab_desempenho:    
         st.markdown("""
             <h1 style="
