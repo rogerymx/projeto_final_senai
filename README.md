@@ -36,8 +36,8 @@ projeto_final_senai/
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/rogerymx/projeto_final_senai.git
+   cd 'seu-repositorio'
    ```
 
 2. Instale as dependências:
@@ -59,7 +59,7 @@ projeto_final_senai/
 
 ## 🧑 Persona
 
-Veja `persona.txt` para uma descrição do público-alvo do sistema.
+Roberto Andrade é CEO da LogCar Air & Mobility, uma empresa do setor de transporte multimodal (aéreo e terrestre). Com 48 anos, ele busca integrar dados logísticos para tomar decisões estratégicas que melhorem a eficiência operacional e orientem investimentos. Seu foco está na análise de desempenho de frotas, consumo de combustível, e visualização clara de indicadores-chave como carga transportada, desempenho por modelo de veículo e eficiência das companhias aéreas.
 
 ## 📄 Licença
 
