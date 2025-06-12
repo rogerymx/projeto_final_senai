@@ -29,6 +29,7 @@ projeto_final_senai/
 ├── carro.png           # Imagem para a página de automóveis
 ├── logo.png            # Logo do projeto
 ├── filtros.txt         # Observações sobre filtros
+├── requirements.txt    # Requisitos para rodar o arquivo
 └── persona.txt         # Definição da persona do usuário
 ```
 
