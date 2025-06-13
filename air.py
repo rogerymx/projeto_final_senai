@@ -102,14 +102,6 @@ if cursor.fetchone()[0] == 0:
     df_airplanes = pd.read_csv('database/airplanes.csv')
     df_airplanes.to_sql('airplane', conn, if_exists='append', index=False)
 
-cursor.execute("DROP VIEW IF EXISTS avioes_desempenho")
-# cursor.execute('''CREATE VIEW IF NOT EXISTS avioes_desempenho AS
-# SELECT  EMPRESA_NOME, ANO, MES, AEROPORTO_DE_ORIGEM_SIGLA, AEROPORTO_DE_ORIGEM_NOME, AEROPORTO_DE_ORIGEM_REGIÃO, AEROPORTO_DE_DESTINO_SIGLA, AEROPORTO_DE_DESTINO_NOME,
-#         AEROPORTO_DE_DESTINO_REGIÃO, NATUREZA, PASSAGEIROS_PAGOS + PASSAGEIROS_GRÁTIS AS PASSAGEIROS, CARGA_PAGA_KG + CARGA_GRÁTIS_KG + CORREIO_KG AS CARGA, GRUPO_DE_VOO, 
-#         ASK, RPK, ATK, RTK, COMBUSTÍVEL_LITROS, DECOLAGENS, HORAS_VOADAS
-# FROM airplane;
-# ''')
-
 
 def air ():
     paleta_monocromatica = ["#10676D", "#1899A4", "#52B6BC", "#8CD3D5", "#C5E9EA"]
@@ -276,7 +268,7 @@ def air ():
         fig_ano = px.bar(
         x=decolPer.index,
         y=decolPer.values,
-        title='Total de Decolagens por Ano',
+        title='Total de Decolagens por Ano (Top 20)',
         labels={'x': 'Ano', 'y': 'Total de Decolagens'},
         text_auto=True  # Adiciona o valor no topo de cada barra
                 )
@@ -313,7 +305,7 @@ def air ():
             df_agrupado = df_agrupado.sort_values('OCUPACAO', ascending=False).head(5)
 
             fig = px.bar(df_agrupado, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
-                title='Taxa de Ocupação Média de Passageiros por Empresa', 
+                title='Taxa de Ocupação Média de Passageiros por Empresa (Top 5)', 
                 barmode='group',
                 color_discrete_sequence=paleta_monocromatica) # <--- AQUI
 
@@ -342,7 +334,7 @@ def air ():
             df_carga = df_carga.sort_values('OCUPACAO', ascending=False).head(5)
 
             fig1 = px.bar(df_carga, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
-                title='Taxa de Ocupação Média de Carga por Empresa', 
+                title='Taxa de Ocupação Média de Carga por Empresa (Top 5)', 
                 barmode='group',
                 color_discrete_sequence=paleta_monocromatica) # <--- AQUI
 
@@ -523,7 +515,7 @@ def air ():
                 text-align:center;
                 font-size:36px;
             ">
-                Região
+                Região (Doméstico)
             </h1>
         """, unsafe_allow_html=True)
         
