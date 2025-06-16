@@ -49,7 +49,6 @@ banner_html = f"""
 </div>
 """
 
-st.markdown(banner_html, unsafe_allow_html=True)
 def auto (conn,cursor):
     st.markdown("""
         <h1 style="

@@ -2,170 +2,162 @@ import sqlite3
 import pandas as pd
 import streamlit as st
 import base64
-with open("carro.png", "rb") as img_file:
+with open("carro_aviao.png", "rb") as img_file:
     img_base64 = base64.b64encode(img_file.read()).decode()
-
-banner_html = f"""
-<div style="
-    position: relative;
-    height: 200px;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 20px;
-">
-    <div style="
-        background-image: url('data:image/png;base64,{img_base64}');
-        background-size: cover;
-        background-position: center;
-        width: 100%;
-        height: 100%;
-        filter: brightness(0.5);
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    "></div>
-
-    <div style="
-        position: relative;
-        z-index: 2;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    ">
-        <h1 style="
-            color: white;
-            font-size: 36px;
-            font-family: Arial, sans-serif;
-            text-shadow: 2px 2px 4px black;
-        ">
-            Bem-vindo à Plataforma de Desempenho
-        </h1>
-    </div>
-</div>
-"""
-
-bannerFooter_html = """
-<div style="
-    position: relative;
-    height: 200px;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 20px;
-">
-    <!-- Imagem de fundo -->
-    <div style="
-        background-image: url('https://s1.1zoom.me/big0/475/Passenger_Airplanes_501163.jpg');
-        background-size: cover;
-        background-position: center;
-        width: 100%;
-        height: 100%;
-        filter: brightness(0.5);
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    "></div>
-
-    <!-- Texto centralizado -->
-    <div style="
-        position: relative;
-        z-index: 2;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    ">
-        <h1 style="
-            color: white;
-            font-size: 36px;
-            font-family: Arial, sans-serif;
-            text-shadow: 2px 2px 4px black;
-            margin: 0;
-        ">
-        </h1>
-    </div>
-</div>
-"""
-
 
 
 def welcome (conn,cursor):
-    st.markdown(banner_html, unsafe_allow_html=True)
-    st.markdown("""
-        <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:10px;" />
-    """, unsafe_allow_html=True)
 
-    # Título centralizado com sombra escura (borda)
     st.markdown("""
         <h1 style="
             text-align:center;
-            font-size:36px;
+            font-size:50px;
         ">
-            Bem-vindo
+            Dashboard LogCar
         </h1>
     """, unsafe_allow_html=True)
 
-    # Linha inferior decorativa
+    st.markdown(
+        f"""
+        <div style="
+            width: 100%;
+            height: 250px;
+            background-image: url('data:image/png;base64,{img_base64}');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            filter: brightness(0.5);
+        ">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
+        <hr style="height:2px; border:none; background-color:#1899A4; margin-top:30px; margin-bottom:30px;" />
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+        <h1 style="
+            text-align:center;
+            font-size:35px;
+        ">
+            Navegação
+        </h1>
+    """, unsafe_allow_html=True)
+
+    # --- SEÇÃO DE NAVEGAÇÃO COM BOTÕES FUNCIONAIS E ESTILO ISOLADO ---
+    
+    # CSS que agora só afeta botões dentro de '.home-nav-buttons'
+    button_style = """
+        <style>
+            .home-nav-buttons {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 30px;
+            }
+            .home-nav-buttons .stButton>button {
+                background-color: #1c1c1e;
+                color: #A9A9A9;
+                border: 1px solid rgba(24, 153, 164, 0.2);
+                padding: 10px 24px;
+                font-weight: 500;
+                border-radius: 10px; /* Borda arredondada para todos */
+                transition: all 0.3s ease-in-out;
+            }
+            .home-nav-buttons .stButton>button:hover {
+                background-color: #1899A4;
+                color: white;
+                border-color: #1899A4;
+            }
+        </style>
+    """
+    st.markdown(button_style, unsafe_allow_html=True)
+
+    # Envelopa as colunas e botões no container com a classe
+    st.markdown('<div class="home-nav-buttons">', unsafe_allow_html=True)
+    nav_b1, nav_b2 = st.columns([1,1])
+
+    with nav_b1:
+        if st.button("🚗 Carros", use_container_width=True):
+            st.session_state.global_opcao = 'Carro'
+            st.rerun()
+
+    with nav_b2:
+        if st.button("✈️ Aviões", use_container_width=True):
+            st.session_state.global_opcao = 'Avião'
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    # --- FIM DA SEÇÃO DE NAVEGAÇÃO ---
+
     st.markdown("""
         <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:30px;" />
     """, unsafe_allow_html=True)
 
+    # --- Início da Seção Dividida com Cards ---
+    col1, col2 = st.columns([1, 4])
 
-    # Lista de nomes com fonte branca e borda escura
-    st.markdown("""
-        <div style='
-            text-align:center;
-            font-size:28px;
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        '>Equipe</div>
-    """, unsafe_allow_html=True)
-
-    st.divider()
-
-    st.markdown("""
-        <ul style="
-            font-size:18px;
-            color:white;
-            text-shadow: 1px 1px 3px black;
-            line-height:1.8;
-            padding-left: 20px;
-            margin-bottom: 30px;
-            list-style-type: '👤 ';
-        ">
-            <li><strong>Guilherme</strong></li>
-            <li><strong>Pedro</strong></li>
-            <li><strong>Roger</strong></li>
-            <li><strong>Willian</strong></li>
-        </ul>
-    """, unsafe_allow_html=True)
-
-
-    st.divider()
-    st.markdown("""
+    with col1:
+        st.markdown("""
         <div style="
-            font-size: 18px;
-            line-height: 1.8;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            border: 1px solid rgba(24, 153, 164, 0.2); 
+            background-color: #1c1c1e; 
+            border-radius: 10px; 
+            padding: 25px; 
+            height: 100%;
         ">
-            <p><strong>Estamos desenvolvendo um dashboard de performance</strong> voltado para apoiar decisões estratégicas da empresa <strong>LogCar Air &amp; Mobility</strong>.</p>
-            <p>O sistema visa reunir e visualizar de forma clara e interativa dados <strong>aéreos</strong> (voos, passageiros, carga, combustível) e <strong>terrestres</strong> (modelos de carros, consumo, aceleração etc.), com indicadores e análises que permitam:</p>
-            <ul style="margin-left: 20px;">
-                <li>Identificar ineficiências operacionais</li>
-                <li>Comparar desempenho por empresa, modelo ou região</li>
-                <li>Simular cenários de integração modal</li>
-                <li>Dar suporte à renovação da frota com base em dados</li>
+            <h3 style="
+                color: #1899A4; 
+                text-align: center; 
+                margin-top: 0; 
+                font-weight: 600;
+                border-bottom: 1px solid #2e2e2e;
+                padding-bottom: 10px;
+            ">Equipe</h3>
+            <ul style="
+                color: #D1D1D6; 
+                list-style-position: inside;
+                padding-left: 0;
+                list-style-type: '👤 '; 
+                line-height: 2.5;
+            ">
+                <li>Guilherme</li>
+                <li>Pedro</li>
+                <li>Roger</li>
+                <li>Willian</li>
             </ul>
         </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
+    with col2:
+        st.markdown("""
+        <div style="
+            border: 1px solid rgba(24, 153, 164, 0.2); 
+            background-color: #1c1c1e; 
+            border-radius: 10px; 
+            padding: 25px; 
+            height: 100%;
+        ">
+            <h3 style="
+                color: #1899A4; 
+                margin-top: 0;
+                font-weight: 600;
+                border-bottom: 1px solid #2e2e2e;
+                padding-bottom: 10px;
+            ">Sobre o Projeto</h3>
+            <div style="color: #D1D1D6; text-align: justify; line-height: 1.7;">
+                <p>Estamos desenvolvendo um dashboard de performance voltado para apoiar decisões estratégicas da empresa <strong>LogCar Air &amp; Mobility</strong>.</p>
+                <p>O sistema visa reunir e visualizar de forma clara e interativa dados <strong>aéreos</strong> e <strong>terrestres</strong>, com indicadores e análises que permitam:</p>
+                <ul style="padding-left: 20px; margin-top:15px;">
+                    <li>Identificar ineficiências operacionais</li>
+                    <li>Comparar desempenho por empresa, modelo ou região</li>
+                    <li>Simular cenários de integração modal</li>
+                    <li>Dar suporte à renovação da frota com base em dados</li>
+                </ul>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
     st.markdown("""
-        <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:10px;" />
+        <hr style="height:4px; border:none; background-color:#1899A4; margin-top:30px; margin-bottom:10px;" />
     """, unsafe_allow_html=True)
-
-    st.markdown(bannerFooter_html, unsafe_allow_html=True)

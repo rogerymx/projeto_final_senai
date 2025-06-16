@@ -26,6 +26,7 @@ projeto_final_senai/
 │   ├── automobile.db
 │   ├── airplanes.csv
 │   └── automobile.csv
+├── carro_aviao.png     #Imagem para a homepage
 ├── carro.png           # Imagem para a página de automóveis
 ├── logo.png            # Logo do projeto
 ├── filtros.txt         # Observações sobre filtros
