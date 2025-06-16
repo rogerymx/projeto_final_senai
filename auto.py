@@ -49,7 +49,6 @@ banner_html = f"""
 </div>
 """
 
-st.markdown(banner_html, unsafe_allow_html=True)
 def auto (conn,cursor):
     st.markdown("""
         <h1 style="
@@ -263,7 +262,21 @@ def auto (conn,cursor):
         with col1:
             st.plotly_chart(peso_vs_cavalos, use_container_width=True)
         with col2:
-            st.plotly_chart(gpm_vs_cavalos, use_container_width=True)    
+            st.plotly_chart(gpm_vs_cavalos, use_container_width=True)
+
+        st.markdown("### Análise de Potência por Tipo de Motor")
+            
+        df_automoveis['cilindros'] = df_automoveis['cilindros'].astype(str)
+            
+        fig_box = px.box(
+            df_automoveis.sort_values('cilindros'), # Ordena para o eixo X ficar (4, 6, 8)
+            x='cilindros',
+            y='cavalos',
+            color='origem', # Colore por país de origem
+            title='Distribuição de Potência (Cavalos) por Número de Cilindros',
+            labels={'cilindros': 'Número de Cilindros', 'cavalos': 'Cavalos (HP)'}
+            )
+        st.plotly_chart(fig_box, use_container_width=True)  
 
     with tab_database:
         st.markdown("""
