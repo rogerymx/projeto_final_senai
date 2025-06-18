@@ -46,9 +46,7 @@ def welcome (conn,cursor):
         </h1>
     """, unsafe_allow_html=True)
 
-    # --- SEÇÃO DE NAVEGAÇÃO COM BOTÕES FUNCIONAIS E ESTILO ISOLADO ---
-    
-    # CSS que agora só afeta botões dentro de '.home-nav-buttons'
+
     button_style = """
         <style>
             .home-nav-buttons {
@@ -74,7 +72,6 @@ def welcome (conn,cursor):
     """
     st.markdown(button_style, unsafe_allow_html=True)
 
-    # Envelopa as colunas e botões no container com a classe
     st.markdown('<div class="home-nav-buttons">', unsafe_allow_html=True)
     nav_b1, nav_b2 = st.columns([1,1])
 
@@ -88,13 +85,11 @@ def welcome (conn,cursor):
             st.session_state.global_opcao = 'Avião'
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
-    # --- FIM DA SEÇÃO DE NAVEGAÇÃO ---
 
     st.markdown("""
         <hr style="height:4px; border:none; background-color:#1899A4; margin-top:10px; margin-bottom:30px;" />
     """, unsafe_allow_html=True)
 
-    # --- Início da Seção Dividida com Cards ---
     col1, col2 = st.columns([1, 4])
 
     with col1:

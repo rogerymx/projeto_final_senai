@@ -135,7 +135,6 @@ def auto (conn,cursor):
             </h1>
         """, unsafe_allow_html=True)
 
-        # CSS personalizado para centralizar as métricas
         st.markdown("""
         <style>
         div[data-testid="stMetric"] {
@@ -174,20 +173,17 @@ def auto (conn,cursor):
             
         carros_por_ano = df_automoveis['ano_modelo'].value_counts().sort_index()
 
-            # 2. Criar o GRÁFICO DE BARRAS
         fig_ano = px.bar(
         x=carros_por_ano.index,
         y=carros_por_ano.values,
         title='Total de Carros por Ano',
         labels={'x': 'Ano', 'y': 'Total de Carros'},
-        text_auto=True  # Adiciona o valor no topo de cada barra
+        text_auto=True  
                 )
 
         fig_ano.update_traces(marker_color='#0ce3e8')
 
-            # 4. Exibir o gráfico
         st.plotly_chart(fig_ano, use_container_width=True)
-            # --- FIM DA SEÇÃO DO GRÁFICO ---
 
 
 
@@ -269,10 +265,10 @@ def auto (conn,cursor):
         df_automoveis['cilindros'] = df_automoveis['cilindros'].astype(str)
             
         fig_box = px.box(
-            df_automoveis.sort_values('cilindros'), # Ordena para o eixo X ficar (4, 6, 8)
+            df_automoveis.sort_values('cilindros'),
             x='cilindros',
             y='cavalos',
-            color='origem', # Colore por país de origem
+            color='origem', 
             title='Distribuição de Potência (Cavalos) por Número de Cilindros',
             labels={'cilindros': 'Número de Cilindros', 'cavalos': 'Cavalos (HP)'}
             )
@@ -289,16 +285,13 @@ def auto (conn,cursor):
         """, unsafe_allow_html=True)
         st.divider()
         
-        # Identifica todas as colunas numéricas
         numeric_cols = df_automoveis.select_dtypes(include=['number']).columns
         
-        # Cria uma cópia e formata os valores para 2 casas decimais
         df_automoveisR = df_automoveis.copy()
         df_automoveisR[numeric_cols] = df_automoveisR[numeric_cols].map(
             lambda x: f"{x:.2f}" if isinstance(x, (int, float)) else x
         )
         
-        # Gera a tabela HTML com estilos
         html_table = df_automoveisR.style.set_table_styles([
             {'selector': 'table', 'props': [('width', '100%'), ('table-layout', 'fixed')]},
             {'selector': 'th', 'props': [('text-align', 'center')]},

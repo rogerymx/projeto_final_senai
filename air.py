@@ -186,12 +186,6 @@ def air ():
         df_avioes = df_avioes[df_avioes['GRUPO_DE_VOO'].isin(grupo_voo_select)]
 
 
-    # ano_selec = st.sidebar.multiselect(
-    # "Ano do Carro",
-    # options=sorted(df_avioes['ANO'].unique()),
-    # default=None
-    # )
-
     def formatar_numero(valor):
         if valor >= 1_000_000_000:
             return f'{valor / 1_000_000_000:.1f}bi'
@@ -217,7 +211,6 @@ def air ():
         """, unsafe_allow_html=True)
         st.divider()
         
-        # CSS personalizado para centralizar as métricas
         st.markdown("""
         <style>
         div[data-testid="stMetric"] {
@@ -238,8 +231,7 @@ def air ():
         }
         </style>
         """, unsafe_allow_html=True)
-        
-        # Layout das colunas
+
         
         total_voos = df_avioes['DECOLAGENS'].sum()
         total_combustivel = df_avioes['COMBUSTÍVEL_LITROS'].sum()
@@ -270,12 +262,12 @@ def air ():
         y=decolPer.values,
         title='Total de Decolagens por Ano (Top 20)',
         labels={'x': 'Ano', 'y': 'Total de Decolagens'},
-        text_auto=True  # Adiciona o valor no topo de cada barra
+        text_auto=True  
                 )
 
         fig_ano.update_traces(marker_color='#0ce3e8')
 
-            # 4. Exibir o gráfico
+
         st.plotly_chart(fig_ano, use_container_width=True)
 
 
@@ -307,15 +299,15 @@ def air ():
             fig = px.bar(df_agrupado, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
                 title='Taxa de Ocupação Média de Passageiros por Empresa (Top 5)', 
                 barmode='group',
-                color_discrete_sequence=paleta_monocromatica) # <--- AQUI
+                color_discrete_sequence=paleta_monocromatica) 
 
             fig.update_traces(
-                text=df_agrupado['OCUPACAO'].apply(lambda x: f'{x:.1f}%'), # Dica: formatar com 1 casa decimal
+                text=df_agrupado['OCUPACAO'].apply(lambda x: f'{x:.1f}%'), 
                 textposition='inside',
                 insidetextanchor='middle',
                 textfont=dict(
                     size=16,
-                    color='white', # Cor branca para melhor contraste com as barras escuras
+                    color='white', 
                     family='Arial, sans-serif'
                 )
             )
@@ -336,15 +328,15 @@ def air ():
             fig1 = px.bar(df_carga, x='EMPRESA_SIGLA', y=['OCUPACAO'], 
                 title='Taxa de Ocupação Média de Carga por Empresa (Top 5)', 
                 barmode='group',
-                color_discrete_sequence=paleta_monocromatica) # <--- AQUI
+                color_discrete_sequence=paleta_monocromatica) 
 
             fig1.update_traces(
-                text=df_carga['OCUPACAO'].apply(lambda x: f'{x:.1f}%'), # Dica: formatar com 1 casa decimal
+                text=df_carga['OCUPACAO'].apply(lambda x: f'{x:.1f}%'),
                 textposition='inside',
                 insidetextanchor='middle',
                 textfont=dict(
                     size=16,
-                    color='white', # Cor branca para melhor contraste com as barras escuras
+                    color='white', 
                     family='Arial, sans-serif'
                 )
             )
@@ -353,34 +345,23 @@ def air ():
         col1, col2 = st.columns(2)
 
         with col1:
-            # Supondo que 'df_filtrado' esteja disponível e filtrado corretamente
 
-            # 1. Agrupa e soma os passageiros por empresa (seu código original)
             market_share_passageiros = df_avioes.groupby('EMPRESA_NOME')['PASSAGEIROS_PAGOS'].sum().reset_index()
 
-            # 2. Ordena as empresas pelo total de passageiros, da maior para a menor
             market_share_passageiros = market_share_passageiros.sort_values(by='PASSAGEIROS_PAGOS', ascending=False)
 
-            # 3. Lógica para separar o Top 20 e agrupar o resto em "Outras"
-            # Verifica se há mais de 20 empresas para justificar o agrupamento
             if len(market_share_passageiros) > 20:
-                # Pega as 20 maiores
                 top_20 = market_share_passageiros.head(20)
                 
-                # Cria um novo DataFrame para a categoria "Outras"
-                # Somando os passageiros de todas as empresas a partir da 21ª posição
                 outras = pd.DataFrame({
                     'EMPRESA_NOME': ['Outras'],
                     'PASSAGEIROS_PAGOS': [market_share_passageiros.iloc[20:]['PASSAGEIROS_PAGOS'].sum()]
                 })
                 
-                # Concatena o DataFrame do Top 20 com o de "Outras"
                 df_para_grafico = pd.concat([top_20, outras], ignore_index=True)
             else:
-                # Se houver 20 ou menos empresas, simplesmente usa o DataFrame completo
                 df_para_grafico = market_share_passageiros
 
-            # 4. Cria o Treemap com o novo DataFrame filtrado e agrupado
             fig = px.treemap(
                 df_para_grafico, 
                 path=[px.Constant("Todas as Empresas"), 'EMPRESA_NOME'], 
@@ -395,34 +376,28 @@ def air ():
             query_decolagens_mes = 'SELECT MÊS, SUM(DECOLAGENS) as DECOLAGENS FROM airplane GROUP BY MÊS'
             media_mes = pd.read_sql_query(query_decolagens_mes, conn)
 
-            # 2. Define 'MÊS' como o índice do DataFrame
             media_mes = media_mes.set_index('MÊS')
 
-            # 3. Cria um índice completo de 1 a 12 e aplica ao DataFrame
-            indice_anual_completo = pd.Index(range(1, 13), name='MÊS')  # Ajuste para 1-12 (meses do ano)
+            indice_anual_completo = pd.Index(range(1, 13), name='MÊS')  
             media_mes = media_mes.reindex(indice_anual_completo, fill_value=0)
 
-            # 4. Transforma o índice 'MÊS' de volta em uma coluna
             media_mes = media_mes.reset_index()
 
-            # 5. Cria o gráfico de pizza
             fig = px.pie(
                 media_mes,
-                names='MÊS',                  # Valores do eixo X (meses)
-                values='DECOLAGENS',           # Valores do eixo Y (decolagens)
+                names='MÊS',                 
+                values='DECOLAGENS',        
                 title='Distribuição de Decolagens por Mês',
-                hole=0.3,                     # Opcional: transforma em "donut chart" (0 = pizza completa)
-                color_discrete_sequence=px.colors.sequential.Teal  # Mantém a cor verde-escura do exemplo
+                hole=0.3,                     
+                color_discrete_sequence=px.colors.sequential.Teal  
             )
 
-            # Personalizações adicionais
             fig.update_traces(
-                textposition='inside',        # Texto dentro das fatias
-                textinfo='percent+label',     # Mostra porcentagem + rótulo (mês)
-                marker=dict(line=dict(color='white', width=1))  # Linhas brancas entre fatias
+                textposition='inside',     
+                textinfo='percent+label',    
+                marker=dict(line=dict(color='white', width=1))  
             )
 
-            # Exibe o gráfico
             st.plotly_chart(fig, use_container_width=True)
 
     with tab_combustivel:
